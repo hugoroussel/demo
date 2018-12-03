@@ -6,6 +6,7 @@ import (
 )
 
 type Block struct {
+	Number        int64
 	Timestamp     int64
 	Data          []byte
 	PrevBlockHash []byte
@@ -13,8 +14,11 @@ type Block struct {
 	Nonce         int
 }
 
+var blockCounter = int64(0)
+
 func NewBlock(data string, prevBlockHash []byte) (newBlock *Block) {
-	newBlock = &Block{time.Now().Unix(), []byte(data), prevBlockHash, []byte{}, 0}
+	newBlock = &Block{blockCounter, time.Now().Unix(), []byte(data), prevBlockHash, []byte{}, 0}
+	blockCounter++
 	pow := NewProofOfWork(newBlock)
 	nonce, hash := pow.Run()
 	newBlock.Nonce = nonce
@@ -29,10 +33,12 @@ func NewGenesisBlock() (firstBlock *Block) {
 }
 
 func (b *Block) Display() {
+	fmt.Println("Block #", b.Number)
 	fmt.Println("Timestamp: ", b.Timestamp)
 	fmt.Printf("Data: %s \n", string(b.Data))
 	fmt.Printf("Prev. Block Hash: %x \n", b.PrevBlockHash)
 	fmt.Printf("Block Hash: %x \n", b.Hash)
+	fmt.Println("Block nonce: ", b.Nonce)
 	fmt.Println()
 }
 
